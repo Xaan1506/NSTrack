@@ -171,15 +171,33 @@ const ProblemsPage = () => {
         </div>
 
         {/* Filters */}
-        <div className="glass-effect rounded-2xl p-6 mb-8" style={{ position: 'relative', zIndex: 10 }}>
+        <div 
+          className={`rounded-2xl p-6 mb-8 transition-all duration-300 ${
+            theme === 'dark' 
+              ? 'glass-effect' 
+              : 'bg-white shadow-lg border-2 border-gray-200'
+          }`} 
+          style={{ position: 'relative', zIndex: 10 }}
+        >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div style={{ position: 'relative', zIndex: 30 }}>
-              <label className="text-slate-200 text-sm font-medium mb-2 block">Learning Track</label>
+              <label className={`text-sm font-medium mb-2 block ${theme === 'dark' ? 'text-slate-200' : 'text-slate-700'}`}>
+                Learning Track
+              </label>
               <Select value={track} onValueChange={setTrack}>
-                <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white" data-testid="track-selector">
+                <SelectTrigger 
+                  className={theme === 'dark' 
+                    ? 'bg-slate-800/50 border-slate-700 text-white' 
+                    : 'bg-gray-50 border-gray-300 text-slate-900'
+                  } 
+                  data-testid="track-selector"
+                >
                   <SelectValue placeholder="Select track" />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700" style={{ zIndex: 9999 }}>
+                <SelectContent 
+                  className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-300'} 
+                  style={{ zIndex: 9999 }}
+                >
                   <SelectItem value="web-dev">Web Development</SelectItem>
                   <SelectItem value="app-dev">App Development</SelectItem>
                   <SelectItem value="ai-ml">AI / ML</SelectItem>
@@ -189,12 +207,23 @@ const ProblemsPage = () => {
             </div>
 
             <div style={{ position: 'relative', zIndex: 20 }}>
-              <label className="text-slate-200 text-sm font-medium mb-2 block">Difficulty</label>
+              <label className={`text-sm font-medium mb-2 block ${theme === 'dark' ? 'text-slate-200' : 'text-slate-700'}`}>
+                Difficulty
+              </label>
               <Select value={difficulty} onValueChange={setDifficulty}>
-                <SelectTrigger className="bg-slate-800/50 border-slate-700 text-white" data-testid="difficulty-selector">
+                <SelectTrigger 
+                  className={theme === 'dark' 
+                    ? 'bg-slate-800/50 border-slate-700 text-white' 
+                    : 'bg-gray-50 border-gray-300 text-slate-900'
+                  } 
+                  data-testid="difficulty-selector"
+                >
                   <SelectValue placeholder="Select difficulty" />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-slate-700" style={{ zIndex: 9999 }}>
+                <SelectContent 
+                  className={theme === 'dark' ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-300'} 
+                  style={{ zIndex: 9999 }}
+                >
                   <SelectItem value="Easy">Easy (+2 points)</SelectItem>
                   <SelectItem value="Medium">Medium (+5 points)</SelectItem>
                   <SelectItem value="Hard">Hard (+10 points)</SelectItem>
