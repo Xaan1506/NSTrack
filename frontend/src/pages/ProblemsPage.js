@@ -255,11 +255,21 @@ const ProblemsPage = () => {
         {problems.length > 0 && (
           <div className="space-y-4" data-testid="problems-list">
             {problems.map((problem, index) => (
-              <div key={problem.id} className="problem-card" data-testid={`problem-${index}`}>
+              <div 
+                key={problem.id} 
+                className={`rounded-xl p-6 transition-all duration-300 ${
+                  theme === 'dark'
+                    ? 'problem-card'
+                    : 'bg-white shadow-md border-2 border-gray-200 hover:shadow-xl hover:border-blue-300'
+                }`}
+                data-testid={`problem-${index}`}
+              >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-xl font-bold text-white">{problem.title}</h3>
+                      <h3 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-slate-900'}`}>
+                        {problem.title}
+                      </h3>
                       <Badge className={getDifficultyColor(problem.difficulty)}>
                         {problem.difficulty}
                       </Badge>
@@ -270,23 +280,27 @@ const ProblemsPage = () => {
                         </Badge>
                       )}
                     </div>
-                    <p className="text-slate-300">{problem.description}</p>
+                    <p className={theme === 'dark' ? 'text-slate-300' : 'text-slate-600'}>
+                      {problem.description}
+                    </p>
                   </div>
                 </div>
 
                 <Accordion type="single" collapsible className="mt-4">
-                  <AccordionItem value="hints" className="border-slate-700">
-                    <AccordionTrigger className="text-cyan-400 hover:no-underline">
+                  <AccordionItem value="hints" className={theme === 'dark' ? 'border-slate-700' : 'border-gray-300'}>
+                    <AccordionTrigger className={`hover:no-underline ${theme === 'dark' ? 'text-cyan-400' : 'text-blue-600'}`}>
                       <div className="flex items-center gap-2">
                         <Lightbulb className="w-4 h-4" />
                         View Hints
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent className="text-slate-300">
+                    <AccordionContent className={theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}>
                       <ul className="space-y-2">
                         {problem.hints.map((hint, idx) => (
                           <li key={idx} className="flex gap-2">
-                            <span className="text-cyan-400">{idx + 1}.</span>
+                            <span className={theme === 'dark' ? 'text-cyan-400' : 'text-blue-600'}>
+                              {idx + 1}.
+                            </span>
                             <span>{hint}</span>
                           </li>
                         ))}
@@ -294,11 +308,11 @@ const ProblemsPage = () => {
                     </AccordionContent>
                   </AccordionItem>
 
-                  <AccordionItem value="solution" className="border-slate-700">
-                    <AccordionTrigger className="text-cyan-400 hover:no-underline">
+                  <AccordionItem value="solution" className={theme === 'dark' ? 'border-slate-700' : 'border-gray-300'}>
+                    <AccordionTrigger className={`hover:no-underline ${theme === 'dark' ? 'text-cyan-400' : 'text-blue-600'}`}>
                       Solution Approach
                     </AccordionTrigger>
-                    <AccordionContent className="text-slate-300">
+                    <AccordionContent className={theme === 'dark' ? 'text-slate-300' : 'text-slate-700'}>
                       {problem.solution_approach}
                     </AccordionContent>
                   </AccordionItem>
