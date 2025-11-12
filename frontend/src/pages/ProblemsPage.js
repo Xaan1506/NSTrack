@@ -5,10 +5,11 @@ import { Button } from '../components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Badge } from '../components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../components/ui/accordion';
-import { Trophy, Loader2, Check, Lightbulb, Code } from 'lucide-react';
+import { Trophy, Loader2, Check, Lightbulb, Code, Sun, Moon } from 'lucide-react';
 import { toast } from 'sonner';
 import CodeEditor from '../components/CodeEditor';
 import { useProgress } from '../context/ProgressContext';
+import { useTheme } from '../context/ThemeContext';
 
 const ProblemsPage = () => {
   const [user, setUser] = useState(null);
