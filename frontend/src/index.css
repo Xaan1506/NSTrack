@@ -84,3 +84,18 @@ html, body, #root {
   height: 100%;
   width: 100%;
 }
+
+/* Scan animation for password typing effect */
+@keyframes scan {
+  0% {
+    left: 0%;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}

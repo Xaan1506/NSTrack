@@ -1,10 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import Editor from '@monaco-editor/react';
 import { Button } from './ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Play, RotateCcw, CheckCircle, AlertCircle, ListChecks } from 'lucide-react';
 import { toast } from 'sonner';
 
-const CodeEditor = ({ language, problem, onSubmit }) => {
+const CodeEditor = ({ language: initialLanguage, problem, onSubmit }) => {
+  const [language, setLanguage] = useState(initialLanguage || 'javascript');
   const [code, setCode] = useState(problem?.starter || '');
   const [output, setOutput] = useState('');
   const [error, setError] = useState('');
@@ -52,9 +54,9 @@ const CodeEditor = ({ language, problem, onSubmit }) => {
     setFeedback(null);
     setOutput('');
     setError('');
-    
+
     setTimeout(() => {
-  const trimmed = code.trim();
+      const trimmed = code.trim();
       if (!trimmed) {
         setError('Please write some code before running the program.');
         setIsRunning(false);
@@ -71,9 +73,9 @@ const CodeEditor = ({ language, problem, onSubmit }) => {
         return;
       }
 
-  const prints = extractOutputIntent(trimmed, language);
-  const preview = buildOutputPreview(prints, language);
-  setOutput(preview || 'No output detected. Add print statements to display results.');
+      const prints = extractOutputIntent(trimmed, language);
+      const preview = buildOutputPreview(prints, language);
+      setOutput(preview || 'No output detected. Add print statements to display results.');
       setError('');
       setIsRunning(false);
       toast.success('Code executed (simulated)');
@@ -92,7 +94,7 @@ const CodeEditor = ({ language, problem, onSubmit }) => {
   };
 
   const detectSyntaxIssues = (source, lang) => {
-  if (lang === 'python') {
+    if (lang === 'python') {
       const lines = source.split('\n');
       if (source.includes('\t')) {
         return 'IndentationError: Detected tab characters. Please use spaces for indentation.';
@@ -311,6 +313,31 @@ const CodeEditor = ({ language, problem, onSubmit }) => {
 
             {/* Editor actions resembling VS Code toolbar */}
             <div className="flex items-center gap-2">
+              {/* Language Selector */}
+              <Select
+                value={language}
+                onValueChange={(value) => {
+                  setLanguage(value);
+                  // Prevent page scroll
+                  setTimeout(() => {
+                    const activeElement = document.activeElement;
+                    if (activeElement && activeElement.blur) {
+                      activeElement.blur();
+                    }
+                  }, 0);
+                }}
+              >
+                <SelectTrigger className="w-[140px] bg-slate-900/30 border-slate-700 text-slate-200 h-8">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-800 border-slate-700">
+                  <SelectItem value="javascript">JavaScript</SelectItem>
+                  <SelectItem value="python">Python</SelectItem>
+                  <SelectItem value="java">Java</SelectItem>
+                  <SelectItem value="cpp">C++</SelectItem>
+                </SelectContent>
+              </Select>
+
               <Button size="sm" variant="ghost" onClick={handleReset} className="text-slate-300 hover:text-cyan-400" data-testid="reset-code-btn">
                 <RotateCcw className="w-4 h-4 mr-1" /> Reset
               </Button>
@@ -320,7 +347,15 @@ const CodeEditor = ({ language, problem, onSubmit }) => {
               <Button size="sm" onClick={handleRun} disabled={isRunning} className="bg-green-600 hover:bg-green-700 text-white" data-testid="run-code-btn">
                 <Play className="w-4 h-4 mr-1" /> {isRunning ? 'Running...' : 'Run'}
               </Button>
-              <Button size="sm" onClick={handleSubmit} className="bg-cyan-600 hover:bg-cyan-700 text-white ml-2">
+              <Button
+                size="sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleSubmit();
+                }}
+                className="bg-cyan-600 hover:bg-cyan-700 text-white ml-2"
+                data-testid="submit-code-btn"
+              >
                 <CheckCircle className="w-4 h-4 mr-1" /> Submit
               </Button>
             </div>
@@ -351,9 +386,9 @@ const CodeEditor = ({ language, problem, onSubmit }) => {
                 smoothScrolling: true,
                 cursorBlinking: 'blink'
               }}
-        />
-      </div>
-      <div className="md:col-span-1 p-3">
+            />
+          </div>
+          <div className="md:col-span-1 p-3">
             <div className="mb-3">
               <div className="flex items-center gap-2 mb-2">
                 <AlertCircle className="w-4 h-4 text-cyan-400" />
@@ -380,90 +415,90 @@ const CodeEditor = ({ language, problem, onSubmit }) => {
           </div>
         </div>
 
-  {/* side panel already rendered next to editor */}
+        {/* side panel already rendered next to editor */}
 
-      {feedback?.type === 'mismatch' && (
-        <div className="glass-effect rounded-xl border border-rose-500/30 p-4 space-y-3">
-          <p className="text-rose-200 text-sm">{feedback.message}</p>
-          <div className="flex flex-wrap gap-3">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setFeedback(null)}
-              className="border-rose-400 text-rose-200 hover:bg-rose-500/10"
-            >
-              Retry Answer
-            </Button>
-            {availableTestCases.length > 0 && (
+        {feedback?.type === 'mismatch' && (
+          <div className="glass-effect rounded-xl border border-rose-500/30 p-4 space-y-3">
+            <p className="text-rose-200 text-sm">{feedback.message}</p>
+            <div className="flex flex-wrap gap-3">
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => setShowTestCases((prev) => !prev)}
-                className="border-cyan-400 text-cyan-200 hover:bg-cyan-500/10"
+                onClick={() => setFeedback(null)}
+                className="border-rose-400 text-rose-200 hover:bg-rose-500/10"
               >
-                <ListChecks className="w-4 h-4 mr-2" />
-                {showTestCases ? 'Hide Test Cases' : 'View Test Cases'}
+                Retry Answer
               </Button>
+              {availableTestCases.length > 0 && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setShowTestCases((prev) => !prev)}
+                  className="border-cyan-400 text-cyan-200 hover:bg-cyan-500/10"
+                >
+                  <ListChecks className="w-4 h-4 mr-2" />
+                  {showTestCases ? 'Hide Test Cases' : 'View Test Cases'}
+                </Button>
+              )}
+            </div>
+            {showTestCases && (
+              <div className="mt-3 space-y-3">
+                {availableTestCases.map((test, idx) => (
+                  <div key={idx} className="bg-slate-900/60 border border-slate-700 rounded-lg p-3 text-sm text-slate-200">
+                    <p className="font-semibold text-cyan-300 mb-1">Test #{idx + 1}</p>
+                    {test.input && (
+                      <p className="mb-1">
+                        <span className="text-slate-400">Input:</span> {test.input}
+                      </p>
+                    )}
+                    {test.output && (
+                      <p>
+                        <span className="text-slate-400">Expected:</span> {test.output}
+                      </p>
+                    )}
+                    {test.explanation && (
+                      <p className="text-slate-400 mt-1">{test.explanation}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
             )}
           </div>
-          {showTestCases && (
-            <div className="mt-3 space-y-3">
-              {availableTestCases.map((test, idx) => (
-                <div key={idx} className="bg-slate-900/60 border border-slate-700 rounded-lg p-3 text-sm text-slate-200">
-                  <p className="font-semibold text-cyan-300 mb-1">Test #{idx + 1}</p>
-                  {test.input && (
-                    <p className="mb-1">
-                      <span className="text-slate-400">Input:</span> {test.input}
-                    </p>
-                  )}
-                  {test.output && (
-                    <p>
-                      <span className="text-slate-400">Expected:</span> {test.output}
-                    </p>
-                  )}
-                  {test.explanation && (
-                    <p className="text-slate-400 mt-1">{test.explanation}</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+        )}
 
-      {feedback?.type === 'error' && (
-        <div className="glass-effect rounded-xl border border-yellow-500/30 p-3 text-sm text-yellow-100">
-          {feedback.message}
-        </div>
-      )}
+        {feedback?.type === 'error' && (
+          <div className="glass-effect rounded-xl border border-yellow-500/30 p-3 text-sm text-yellow-100">
+            {feedback.message}
+          </div>
+        )}
 
-      {onSubmit && (
-        <div className="flex justify-end">
-          <Button
-            onClick={handleSubmit}
-            className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
-            data-testid="submit-solution-btn"
-          >
-            <CheckCircle className="w-4 h-4 mr-2" />
-            Submit Solution
-          </Button>
-        </div>
-      )}
-      {/* Status bar (VS Code style) */}
-      <div className="mt-2 bg-slate-900/40 border border-slate-800 rounded-b-md px-4 py-2 text-xs text-slate-300 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <span className="px-2 py-0.5 bg-slate-800/40 rounded">UTF-8</span>
-          <span className="px-2 py-0.5 bg-slate-800/40 rounded">Spaces: 4</span>
-          <span className="px-2 py-0.5 bg-slate-800/40 rounded">LF</span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-slate-400">Ln 1, Col 1</span>
-          <span className="text-slate-400">Prettier</span>
-          <span className="text-slate-400">main</span>
+        {onSubmit && (
+          <div className="flex justify-end">
+            <Button
+              onClick={handleSubmit}
+              className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
+              data-testid="submit-solution-btn"
+            >
+              <CheckCircle className="w-4 h-4 mr-2" />
+              Submit Solution
+            </Button>
+          </div>
+        )}
+        {/* Status bar (VS Code style) */}
+        <div className="mt-2 bg-slate-900/40 border border-slate-800 rounded-b-md px-4 py-2 text-xs text-slate-300 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <span className="px-2 py-0.5 bg-slate-800/40 rounded">UTF-8</span>
+            <span className="px-2 py-0.5 bg-slate-800/40 rounded">Spaces: 4</span>
+            <span className="px-2 py-0.5 bg-slate-800/40 rounded">LF</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-slate-400">Ln 1, Col 1</span>
+            <span className="text-slate-400">Prettier</span>
+            <span className="text-slate-400">main</span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
   );
 };
 

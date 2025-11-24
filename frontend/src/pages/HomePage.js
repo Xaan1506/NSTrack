@@ -4,6 +4,8 @@ import { Button } from '../components/ui/button';
 import { Users, ArrowRight, Sun, Moon, CheckCircle2, Bell, ChevronDown } from 'lucide-react';
 // theme toggle removed for landing page to enforce all-black design
 import FeaturesSection from '../components/FeaturesSection';
+import InteractiveBubble from '../components/InteractiveBubble';
+import LoadingScreen from '../components/LoadingScreen';
 import { useTheme } from '../context/ThemeContext';
 
 const HomePage = () => {
@@ -14,6 +16,12 @@ const HomePage = () => {
   const [user, setUser] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
+
+  // Check if animation has already been shown in this session
+  const [showLoading, setShowLoading] = useState(() => {
+    return !sessionStorage.getItem('animationShown');
+  });
+
   useEffect(() => {
     try {
       const saved = localStorage.getItem('profilePhoto');
@@ -39,10 +47,46 @@ const HomePage = () => {
     'Community-focused for NST students'
   ];
 
+  // Show loading screen if not yet completed
+  if (showLoading) {
+    return <LoadingScreen onComplete={() => {
+      setShowLoading(false);
+      // Mark animation as shown for this session
+      sessionStorage.setItem('animationShown', 'true');
+    }} />;
+  }
+
   return (
     <div className={`min-h-screen transition-colors duration-200 ${theme === 'dark' ? 'bg-black text-white' : 'bg-white text-gray-900'}`}>
       {/* Hero Section */}
       <div className="relative overflow-hidden">
+        {/* Floating Interactive Keyboard Keys */}
+        <div className="absolute inset-0 overflow-hidden">
+          {/* Keyboard keys that move away from mouse */}
+          {[
+            { key: 'CMD', delay: '0s', duration: '20s', x: '10%', y: '20%' },
+            { key: 'RETURN', delay: '2s', duration: '25s', x: '80%', y: '15%' },
+            { key: 'SHIFT', delay: '4s', duration: '22s', x: '15%', y: '70%' },
+            { key: 'ENTER', delay: '1s', duration: '24s', x: '85%', y: '60%' },
+            { key: 'CTRL', delay: '3s', duration: '23s', x: '50%', y: '30%' },
+            { key: 'ALT', delay: '5s', duration: '21s', x: '30%', y: '50%' },
+            { key: 'ESC', delay: '2.5s', duration: '26s', x: '70%', y: '40%' },
+            { key: 'TAB', delay: '4.5s', duration: '19s', x: '20%', y: '80%' },
+            { key: 'SPACE', delay: '1.5s', duration: '27s', x: '60%', y: '75%' },
+            { key: 'DEL', delay: '3.5s', duration: '20s', x: '90%', y: '85%' },
+          ].map((item, index) => (
+            <InteractiveBubble
+              key={index}
+              keyText={item.key}
+              initialX={item.x}
+              initialY={item.y}
+              delay={item.delay}
+              duration={item.duration}
+              theme={theme}
+            />
+          ))}
+        </div>
+
         {/* Decorative background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl"></div>
@@ -125,7 +169,7 @@ const HomePage = () => {
               <Users className="w-4 h-4 text-cyan-700 dark:text-cyan-400" />
               <span className="text-cyan-700 dark:text-cyan-400 text-sm font-medium">Built for NST Students</span>
             </div>
-            
+
             <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 to-blue-700 dark:from-cyan-400 dark:to-blue-500">
                 Your AI-Powered
@@ -135,12 +179,12 @@ const HomePage = () => {
                 Learning Mentor
               </span>
             </h2>
-            
+
             <p className="text-xl text-gray-600 dark:text-slate-300 mb-8 max-w-3xl mx-auto">
-              Stop struggling with scattered resources. NSTrack creates personalized learning paths, 
+              Stop struggling with scattered resources. NSTrack creates personalized learning paths,
               generates practice problems, and guides you from basics to mastery - all in one place.
             </p>
-            
+
             <div className="flex items-center justify-center gap-4">
               <Button
                 onClick={(e) => {
@@ -168,12 +212,12 @@ const HomePage = () => {
         </div>
       </div>
 
-      
+
       {/* Features Section */}
       <FeaturesSection />
 
       {/* CTA Section (dark) */}
-  <div className="max-w-7xl mx-auto px-6 py-20">
+      <div className="max-w-7xl mx-auto px-6 py-20">
         <div className="bg-slate-900/60 backdrop-blur-sm rounded-2xl p-12 text-center border border-slate-800 shadow-xl">
           <h3 className="text-5xl font-extrabold text-white mb-6">
             Ready to Transform Your Learning Journey?

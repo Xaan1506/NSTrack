@@ -321,7 +321,7 @@ const RoadmapPage = () => {
       }
     ];
 
-  return allProblems.filter((problem) => {
+    return allProblems.filter((problem) => {
       const focusMatch = true;
       const levelMatch =
         (level === 'beginner' && problem.difficulty === 'Easy') ||
@@ -378,7 +378,7 @@ const RoadmapPage = () => {
     const isBeginner = level === 'beginner';
     const isIntermediate = level === 'intermediate';
     const isAdvanced = level === 'advanced';
-    
+
     // Initialize path with core fundamentals based on level
     let path = [];
     const selectedTrack = TRACK_CONFIG[trackKey] || TRACK_CONFIG['web-dev'];
@@ -391,42 +391,42 @@ const RoadmapPage = () => {
       selectedTrack.levelTopics?.[levelKey]?.forEach(topic => path.push(topic));
       path.push('');
     }
-    
+
     // Detect technologies from user input
     const detectedTech = detectTechnologies(goals);
-    
+
     // Extract key problem areas from the user's description with enhanced matching
     const problemKeywords = [
-      { 
-        key: 'responsive', 
+      {
+        key: 'responsive',
         aliases: ['responsive', 'mobile', 'tablet', 'desktop', 'screen size'],
         topics: ['Responsive Design', 'Media Queries', 'Flexbox', 'CSS Grid', 'Viewport Units']
       },
-      { 
-        key: 'layout', 
+      {
+        key: 'layout',
         aliases: ['layout', 'positioning', 'alignment', 'spacing', 'grid', 'flex'],
         topics: ['CSS Layout', 'Flexbox', 'CSS Grid', 'Positioning', 'CSS Box Model']
       },
-      { 
-        key: 'javascript', 
+      {
+        key: 'javascript',
         aliases: ['javascript', 'js', 'ecmascript', 'es6', 'esnext'],
         topics: ['JavaScript Fundamentals', 'DOM Manipulation', 'ES6+ Features', 'Async/Await', 'Promises']
       },
-      { 
+      {
         key: 'api',
         aliases: ['api', 'rest', 'graphql', 'fetch', 'axios'],
         topics: ['REST APIs', 'GraphQL', 'Fetch API', 'Axios', 'Error Handling']
       },
-      { 
+      {
         key: 'performance',
         aliases: ['performance', 'speed', 'optimization', 'fast', 'slow'],
         topics: ['Performance Optimization', 'Lazy Loading', 'Code Splitting', 'Caching']
       }
     ];
-    
+
     // Enhanced problem detection
     const detectedProblems = [];
-    problemKeywords.forEach(({aliases, topics}) => {
+    problemKeywords.forEach(({ aliases, topics }) => {
       const isMentioned = aliases.some(alias => goalsLower.includes(alias));
       if (isMentioned) {
         detectedProblems.push(...topics);
@@ -436,8 +436,8 @@ const RoadmapPage = () => {
     // Generate path based on detected technologies and problems
     if (detectedTech.length > 0) {
       path.push('Based on your goals, I recommend focusing on these technologies:');
-      
-      detectedTech.forEach(({name, category, confidence, related}) => {
+
+      detectedTech.forEach(({ name, category, confidence, related }) => {
         const techName = name.charAt(0).toUpperCase() + name.slice(1);
         path.push(`• ${techName} (${category}${related.length > 0 ? `, related to: ${related.join(', ')}` : ''})`);
       });
@@ -455,7 +455,7 @@ const RoadmapPage = () => {
 
     // Find relevant topics based on user's problem description
     const relevantTopics = [];
-    problemKeywords.forEach(({key, topics}) => {
+    problemKeywords.forEach(({ key, topics }) => {
       if (goalsLower.includes(key)) {
         relevantTopics.push(...topics);
       }
@@ -476,7 +476,7 @@ const RoadmapPage = () => {
         path.push(`• ${topic}`);
       });
     }
-    
+
     // Detect specific technologies and frameworks mentioned in the problem
     const techStack = {
       frontend: {
@@ -523,10 +523,10 @@ const RoadmapPage = () => {
         tdd: goalsLower.includes('tdd') || goalsLower.includes('test driven')
       }
     };
-    
+
     // Add frontend technologies to path based on the user's problem context
     const frontendTechs = [];
-    
+
     if (techStack.frontend.react) {
       frontendTechs.push('React.js');
       if (isBeginner) {
@@ -536,45 +536,45 @@ const RoadmapPage = () => {
         path.push('Master React patterns (HOCs, render props, custom hooks)');
         path.push('Advanced state management (Context API, Redux, or Recoil)');
       }
-      
+
       if (techStack.frontend.typescript) {
         path.push('Integrate TypeScript with React for type safety');
         path.push('TypeScript best practices for React components and hooks');
       }
     }
-    
+
     if (techStack.frontend.vue) {
       frontendTechs.push('Vue.js');
       path.push('Learn Vue.js fundamentals (components, directives, computed properties)');
       path.push('State management with Vuex or Pinia');
     }
-    
+
     if (techStack.frontend.angular) {
       frontendTechs.push('Angular');
       path.push('Master Angular components, services, and dependency injection');
       path.push('Learn RxJS for reactive programming in Angular');
     }
-    
+
     if (techStack.frontend.svelte) {
       frontendTechs.push('Svelte');
       path.push('Learn Svelte components and reactivity');
       path.push('State management with Svelte stores');
     }
-    
+
     // Add general frontend topics if specific framework not mentioned
     if (frontendTechs.length === 0 && (goalsLower.includes('frontend') || goalsLower.includes('ui') || goalsLower.includes('design'))) {
       path.push('Deep dive into modern JavaScript (ES6+ features, async/await, closures)');
       path.push('Master CSS Grid and Flexbox for modern layouts');
       path.push('Learn responsive design principles and mobile-first development');
     }
-    
+
     // Add backend technologies to path based on the user's problem context
     const backendTechs = [];
-    
+
     if (techStack.backend.node || techStack.backend.express) {
       backendTechs.push('Node.js');
       if (techStack.backend.express) backendTechs.push('Express.js');
-      
+
       if (isBeginner) {
         path.push('Learn Node.js fundamentals (modules, event loop, file system)');
         path.push('Build RESTful APIs with Express.js');
@@ -582,14 +582,14 @@ const RoadmapPage = () => {
         path.push('Advanced Node.js patterns (streams, worker threads, clustering)');
         path.push('Design scalable and maintainable Express.js applications');
       }
-      
+
       if (isIntermediate || isAdvanced) {
         path.push('Implement authentication & authorization (JWT, OAuth, sessions)');
         path.push('API security best practices (rate limiting, CORS, sanitization)');
         path.push('Error handling and logging strategies');
       }
     }
-    
+
     if (techStack.backend.python) {
       backendTechs.push('Python');
       if (goalsLower.includes('django')) {
@@ -603,7 +603,7 @@ const RoadmapPage = () => {
         path.push('Build web applications with your preferred Python framework');
       }
     }
-    
+
     if (techStack.backend.java) {
       backendTechs.push('Java');
       if (goalsLower.includes('spring')) {
@@ -614,75 +614,75 @@ const RoadmapPage = () => {
         path.push('Build web applications with Java EE or Spring');
       }
     }
-    
+
     // Add general backend topics if specific technology not mentioned
     if (backendTechs.length === 0 && (goalsLower.includes('backend') || goalsLower.includes('api') || goalsLower.includes('server'))) {
       path.push('Learn about RESTful API design principles');
       path.push('Understand HTTP methods and status codes');
       path.push('API documentation with OpenAPI/Swagger');
     }
-    
+
     // Add database technologies based on the user's problem context
     const dbTechs = [];
-    
+
     if (techStack.database.mongodb) {
       dbTechs.push('MongoDB');
       path.push('Master MongoDB fundamentals (collections, documents, queries)');
       path.push('Data modeling with MongoDB (relationships, schema design)');
-      
+
       if (techStack.backend.node) {
         path.push('Integrate MongoDB with Node.js using Mongoose ODM');
         path.push('Advanced Mongoose features (middleware, validation, aggregation)');
       }
     }
-    
+
     if (techStack.database.postgresql || techStack.database.mysql || techStack.database.sql) {
-      const dbType = techStack.database.postgresql ? 'PostgreSQL' : 
-                    techStack.database.mysql ? 'MySQL' : 'SQL';
+      const dbType = techStack.database.postgresql ? 'PostgreSQL' :
+        techStack.database.mysql ? 'MySQL' : 'SQL';
       dbTechs.push(dbType);
-      
+
       path.push(`Master ${dbType} (tables, relationships, complex queries, transactions)`);
       path.push('Database optimization and indexing strategies');
-      
+
       if (techStack.backend.node) {
-        const orm = techStack.database.postgresql ? 'Sequelize/TypeORM' : 
-                   techStack.database.mysql ? 'Sequelize/TypeORM' : 'Knex.js/TypeORM';
+        const orm = techStack.database.postgresql ? 'Sequelize/TypeORM' :
+          techStack.database.mysql ? 'Sequelize/TypeORM' : 'Knex.js/TypeORM';
         path.push(`Connect ${dbType} with Node.js using ${orm}`);
       }
     }
-    
+
     if (techStack.database.firebase) {
       dbTechs.push('Firebase');
       path.push('Learn Firebase Realtime Database and Firestore');
       path.push('Implement authentication and security rules');
     }
-    
+
     // Add general database topics if no specific database mentioned
     if (dbTechs.length === 0 && (goalsLower.includes('database') || goalsLower.includes('data'))) {
       path.push('Learn about different types of databases (SQL vs NoSQL)');
       path.push('Database design principles and normalization');
       path.push('Query optimization and indexing');
     }
-    
+
     // Add advanced topics based on level
     if (isIntermediate || isAdvanced) {
       path.push('Learn about software architecture patterns (MVC, Microservices, etc.)');
       path.push('Understand CI/CD pipelines and DevOps basics');
-      
+
       if (isAdvanced) {
         path.push('Master performance optimization techniques');
         path.push('Learn about containerization with Docker');
         path.push('Explore cloud platforms (AWS, GCP, or Azure)');
       }
     }
-    
+
     // Add project-based learning tailored to the user's problem
     if (path.length > 0) {
       // Extract potential project ideas from the problem description
       const projectIdeas = [];
       const problemWords = goalsLower.split(/\s+/);
       const projectVerbs = ['build', 'create', 'develop', 'make', 'design'];
-      
+
       // Look for project ideas in the problem description
       for (let i = 0; i < problemWords.length - 1; i++) {
         if (projectVerbs.includes(problemWords[i])) {
@@ -694,7 +694,7 @@ const RoadmapPage = () => {
           }
         }
       }
-      
+
       // If no project ideas were found in the problem description, generate some based on technologies
       if (projectIdeas.length === 0) {
         if (frontendTechs.length > 0) {
@@ -707,7 +707,7 @@ const RoadmapPage = () => {
           projectIdeas.push(`a database-powered application with ${dbTechs.join('/')}`);
         }
       }
-      
+
       // Add the project to the learning path
       if (projectIdeas.length > 0) {
         path.push('');  // Empty line for better readability
@@ -721,7 +721,7 @@ const RoadmapPage = () => {
         // Fallback to a generic project idea
         path.push('Build a complete project that solves a real-world problem');
       }
-      
+
       // Add deployment step if relevant to the user's problem
       if (goalsLower.includes('deploy') || goalsLower.includes('host') || goalsLower.includes('production')) {
         path.push('\nDeployment & DevOps:');
@@ -749,27 +749,27 @@ const RoadmapPage = () => {
     // goalsLower is already defined above
     let focusArea = selectedTrack?.focusArea || 'web development';
     const allowFocusOverride = trackKey === 'web-dev';
-    
+
     if (allowFocusOverride) {
-      if ((goalsLower.includes('frontend') || goalsLower.includes('front end') || 
-           goalsLower.includes('react') || goalsLower.includes('vue') || 
-           goalsLower.includes('angular') || goalsLower.includes('ui') || 
-           goalsLower.includes('ux') || goalsLower.includes('design')) &&
-          !goalsLower.includes('backend') && !goalsLower.includes('node') && !goalsLower.includes('api')) {
+      if ((goalsLower.includes('frontend') || goalsLower.includes('front end') ||
+        goalsLower.includes('react') || goalsLower.includes('vue') ||
+        goalsLower.includes('angular') || goalsLower.includes('ui') ||
+        goalsLower.includes('ux') || goalsLower.includes('design')) &&
+        !goalsLower.includes('backend') && !goalsLower.includes('node') && !goalsLower.includes('api')) {
         focusArea = 'frontend development';
-      } else if ((goalsLower.includes('backend') || goalsLower.includes('back end') || 
-                  goalsLower.includes('server') || goalsLower.includes('api') || 
-                  goalsLower.includes('database') || goalsLower.includes('node')) &&
-                 !goalsLower.includes('frontend') && !goalsLower.includes('react') && 
-                 !goalsLower.includes('vue') && !goalsLower.includes('angular')) {
+      } else if ((goalsLower.includes('backend') || goalsLower.includes('back end') ||
+        goalsLower.includes('server') || goalsLower.includes('api') ||
+        goalsLower.includes('database') || goalsLower.includes('node')) &&
+        !goalsLower.includes('frontend') && !goalsLower.includes('react') &&
+        !goalsLower.includes('vue') && !goalsLower.includes('angular')) {
         focusArea = 'backend development';
       } else if (path.length > 0) {
         const frontendKeywords = ['html', 'css', 'javascript', 'react', 'vue', 'angular', 'ui', 'ux', 'design'];
         const backendKeywords = ['node', 'express', 'api', 'server', 'database', 'mongodb', 'postgres', 'sql'];
-        
+
         const frontendCount = frontendKeywords.filter(kw => goalsLower.includes(kw)).length;
         const backendCount = backendKeywords.filter(kw => goalsLower.includes(kw)).length;
-        
+
         if (frontendCount > backendCount) {
           focusArea = 'frontend-focused development';
         } else if (backendCount > frontendCount) {
@@ -782,25 +782,25 @@ const RoadmapPage = () => {
 
     // Adjust path based on experience level
     let adjustedPath = [...path]; // Start with our custom path
-    
+
     if (level === 'beginner') {
       // Keep all topics but add some beginner-friendly explanations
-      adjustedPath = adjustedPath.map(topic => 
+      adjustedPath = adjustedPath.map(topic =>
         topic.startsWith('Master') ? topic : `Learn ${topic.toLowerCase()}`
       );
     } else if (level === 'intermediate') {
       // Skip very basic topics for intermediates
-      adjustedPath = adjustedPath.filter(topic => 
+      adjustedPath = adjustedPath.filter(topic =>
         !topic.toLowerCase().includes('fundamentals') &&
         !topic.toLowerCase().includes('learn html')
       );
     } else {
       // Advanced users get more challenging topics
-      adjustedPath = adjustedPath.filter(topic => 
+      adjustedPath = adjustedPath.filter(topic =>
         !topic.toLowerCase().includes('fundamentals') &&
         !topic.toLowerCase().includes('learn ')
       );
-      
+
       if (adjustedPath.length < 5) {
         // Add advanced topics if we don't have enough
         if (focusArea.includes('frontend')) {
@@ -839,7 +839,7 @@ const RoadmapPage = () => {
 
     const weeks = timeMap[time] || 12;
     const stepsPerWeek = Math.max(1, Math.ceil(adjustedPath.length / weeks));
-    
+
     const weeklyRoadmap = [];
     for (let i = 0; i < adjustedPath.length; i += stepsPerWeek) {
       weeklyRoadmap.push({
@@ -866,7 +866,7 @@ const RoadmapPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
-    
+
     if (!formData.goals.trim()) {
       toast.error('Please enter your learning goals');
       return;
@@ -875,10 +875,10 @@ const RoadmapPage = () => {
       toast.error('Please select a learning track');
       return;
     }
-    
+
     setLoading(true);
-    
-  try {
+
+    try {
       // Generate the roadmap directly using the existing function
       const generatedRoadmap = RoadmapPage.generateAIPoweredRoadmap(
         formData.goals,
@@ -886,15 +886,15 @@ const RoadmapPage = () => {
         formData.current_level,
         track
       );
-      
+
       setRoadmap(generatedRoadmap);
       setStep('roadmap');
-      
+
       // Scroll to the roadmap section
       setTimeout(() => {
         document.getElementById('roadmap-section')?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
-      
+
       toast.success('Roadmap generated successfully!');
     } catch (error) {
       console.error('Error generating roadmap:', error);
@@ -938,7 +938,7 @@ const RoadmapPage = () => {
   const getPersonalizedTips = (goals, level) => {
     const tips = [];
     const goalsLower = goals.toLowerCase();
-    
+
     if (level === 'beginner') {
       tips.push('Start with small projects to build confidence');
       tips.push('Focus on understanding core concepts before frameworks');
@@ -969,13 +969,39 @@ const RoadmapPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6 lg:px-8 transition-colors duration-200">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            {step === 'questions' ? 'Create Your Learning Roadmap' : roadmap?.title || 'Your Learning Path'}
-          </h1>
-          {step === 'roadmap' && roadmap?.description && (
+    <div className="min-h-screen relative overflow-hidden transition-colors duration-200">
+      {/* Background Video */}
+      <div className="fixed inset-0 z-0">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover"
+          style={{
+            opacity: 1.0,
+            filter: 'brightness(0.7) contrast(1.1)'
+          }}
+        >
+          <source src="/161334-823146699.mp4" type="video/mp4" />
+        </video>
+        {/* Gradient overlay for text readability */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(135deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.55) 100%)'
+          }}
+        />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              {step === 'questions' ? 'Create Your Learning Roadmap' : roadmap?.title || 'Your Learning Path'}
+            </h1>
+            {step === 'roadmap' && roadmap?.description && (
               <div className="space-y-2">
                 <p className="text-gray-600 dark:text-gray-300">{roadmap.description}</p>
                 {roadmap.trackSummary && (
@@ -984,204 +1010,205 @@ const RoadmapPage = () => {
                   </p>
                 )}
               </div>
-          )}
-        </div>
-
-        {step === 'questions' && (
-          <div className="bg-white dark:bg-gray-800/80 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700/50">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <Label htmlFor="goals" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  What are your learning goals? *
-                </Label>
-                <Textarea
-                  id="goals"
-                  name="goals"
-                  value={formData.goals}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full bg-white dark:bg-gray-700/50 border-gray-300 dark:border-gray-600"
-                  rows={3}
-                  placeholder="E.g., Build a portfolio website, Get a job at a tech company, Master algorithms..."
-                  required
-                />
-              </div>
-
-              <div>
-                <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Which learning track are you focusing on? *
-                </Label>
-                <Select value={track} onValueChange={handleTrackChange} required>
-                  <SelectTrigger className="mt-2 bg-white dark:bg-gray-700/50 border-gray-300 dark:border-gray-600">
-                    <SelectValue placeholder="Select a track" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-gray-800">
-                    {trackOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                  {TRACK_CONFIG[track]?.summary || 'Choose where you want to focus your efforts.'}
-                </p>
-              </div>
-
-              <div>
-                <Label htmlFor="time_availability" className="text-slate-200 text-sm font-medium">
-                  How much time can you dedicate per week? *
-                </Label>
-                <Select
-                  value={formData.time_availability}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, time_availability: value }))}
-                  required
-                >
-                  <SelectTrigger className="mt-2 bg-white dark:bg-gray-700/50 border-gray-300 dark:border-gray-600">
-                    <SelectValue placeholder="Select time commitment" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-gray-800">
-                    <SelectItem value="5-10 hours">5-10 hours/week</SelectItem>
-                    <SelectItem value="10-15 hours">10-15 hours/week</SelectItem>
-                    <SelectItem value="15-20 hours">15-20 hours/week</SelectItem>
-                    <SelectItem value="20+ hours">20+ hours/week</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="current_level" className="text-slate-200 text-sm font-medium">
-                  Current skill level in this track? *
-                </Label>
-                <Select
-                  value={formData.current_level}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, current_level: value }))}
-                  required
-                >
-                  <SelectTrigger className="mt-2 bg-white dark:bg-gray-700/50 border-gray-300 dark:border-gray-600">
-                    <SelectValue placeholder="Select your level" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-gray-800">
-                    <SelectItem value="beginner">Beginner (0-6 months experience)</SelectItem>
-                    <SelectItem value="intermediate">Intermediate (6-12 months experience)</SelectItem>
-                    <SelectItem value="advanced">Advanced (1+ years experience)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="pt-4">
-                <Button
-                  type="submit"
-                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white py-3 px-6 rounded-lg font-medium transition-all duration-200"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      Generating Roadmap...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="h-5 w-5" />
-                      Generate My Roadmap
-                    </>
-                  )}
-                </Button>
-              </div>
-            </form>
-            {generationError && (
-              <div className="mt-4 p-4 bg-red-900 text-white rounded">
-                <h4 className="font-bold">Roadmap generation error</h4>
-                <p className="text-sm">{generationError.message}</p>
-                <pre className="text-xs mt-2 max-h-40 overflow-auto text-red-200">{generationError.stack}</pre>
-              </div>
             )}
           </div>
-        )}
 
-        {step === 'roadmap' && roadmap && (
-          <div className="space-y-8">
+          {step === 'questions' && (
             <div className="bg-white dark:bg-gray-800/80 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700/50">
-              <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-cyan-500 mb-2">{roadmap.title}</h1>
-                <p className="text-gray-600 dark:text-gray-300">{roadmap.description}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                  Focus Area: {roadmap.focusAreas} • {roadmap.totalWeeks} weeks
-                </p>
-              </div>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <Label htmlFor="goals" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    What are your learning goals? *
+                  </Label>
+                  <Textarea
+                    id="goals"
+                    name="goals"
+                    value={formData.goals}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full bg-white dark:bg-gray-700/50 border-gray-300 dark:border-gray-600"
+                    rows={3}
+                    placeholder="E.g., Build a portfolio website, Get a job at a tech company, Master algorithms..."
+                    required
+                  />
+                </div>
 
-              <div className="grid md:grid-cols-3 gap-8 mb-8">
-                <div className="bg-white/5 p-6 rounded-xl border border-gray-200/10">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Target className="w-6 h-6 text-cyan-400" />
-                    <h3 className="text-lg font-semibold text-white">Focus Area</h3>
-                  </div>
-                  <p className="text-gray-300">
-                    {roadmap.focusAreas}
-                  </p>
-                  <p className="text-xs text-gray-400 mt-1">
-                    {roadmap.trackLabel}
-                  </p>
-                </div>
-                <div className="bg-white/5 p-6 rounded-xl border border-gray-200/10">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Clock className="w-6 h-6 text-cyan-400" />
-                    <h3 className="text-lg font-semibold text-white">Duration</h3>
-                  </div>
-                  <p className="text-gray-300">
-                    {roadmap.totalWeeks} weeks at {formData.time_availability}/week
+                <div>
+                  <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Which learning track are you focusing on? *
+                  </Label>
+                  <Select value={track} onValueChange={handleTrackChange} required>
+                    <SelectTrigger className="mt-2 bg-white dark:bg-gray-700/50 border-gray-300 dark:border-gray-600">
+                      <SelectValue placeholder="Select a track" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white dark:bg-gray-800">
+                      {trackOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    {TRACK_CONFIG[track]?.summary || 'Choose where you want to focus your efforts.'}
                   </p>
                 </div>
-                <div className="bg-white/5 p-6 rounded-xl border border-gray-200/10">
-                  <div className="flex items-center gap-3 mb-3">
-                    <Lightbulb className="w-6 h-6 text-cyan-400" />
-                    <h3 className="text-lg font-semibold text-white">Level</h3>
-                  </div>
-                  <p className="text-gray-300 capitalize">
-                    {formData.current_level}
-                  </p>
-                </div>
-              </div>
 
-              <div className="mb-8">
-                <h3 className="text-xl font-semibold text-cyan-400 mb-4 flex items-center gap-2">
-                  <Lightbulb className="w-5 h-5" />
-                  Personalized Tips
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {roadmap.personalizedTips?.map((tip, index) => (
-                    <div key={index} className="flex items-start gap-2 bg-white/5 p-4 rounded-lg">
-                      <span className="text-cyan-400">•</span>
-                      <p className="text-gray-300">{tip}</p>
+                <div>
+                  <Label htmlFor="time_availability" className="text-slate-200 text-sm font-medium">
+                    How much time can you dedicate per week? *
+                  </Label>
+                  <Select
+                    value={formData.time_availability}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, time_availability: value }))}
+                    required
+                  >
+                    <SelectTrigger className="mt-2 bg-white dark:bg-gray-700/50 border-gray-300 dark:border-gray-600">
+                      <SelectValue placeholder="Select time commitment" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white dark:bg-gray-800">
+                      <SelectItem value="5-10 hours">5-10 hours/week</SelectItem>
+                      <SelectItem value="10-15 hours">10-15 hours/week</SelectItem>
+                      <SelectItem value="15-20 hours">15-20 hours/week</SelectItem>
+                      <SelectItem value="20+ hours">20+ hours/week</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="current_level" className="text-slate-200 text-sm font-medium">
+                    Current skill level in this track? *
+                  </Label>
+                  <Select
+                    value={formData.current_level}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, current_level: value }))}
+                    required
+                  >
+                    <SelectTrigger className="mt-2 bg-white dark:bg-gray-700/50 border-gray-300 dark:border-gray-600">
+                      <SelectValue placeholder="Select your level" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white dark:bg-gray-800">
+                      <SelectItem value="beginner">Beginner (0-6 months experience)</SelectItem>
+                      <SelectItem value="intermediate">Intermediate (6-12 months experience)</SelectItem>
+                      <SelectItem value="advanced">Advanced (1+ years experience)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="pt-4">
+                  <Button
+                    type="submit"
+                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white py-3 px-6 rounded-lg font-medium transition-all duration-200"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        Generating Roadmap...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-5 w-5" />
+                        Generate My Roadmap
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </form>
+              {generationError && (
+                <div className="mt-4 p-4 bg-red-900 text-white rounded">
+                  <h4 className="font-bold">Roadmap generation error</h4>
+                  <p className="text-sm">{generationError.message}</p>
+                  <pre className="text-xs mt-2 max-h-40 overflow-auto text-red-200">{generationError.stack}</pre>
+                </div>
+              )}
+            </div>
+          )}
+
+          {step === 'roadmap' && roadmap && (
+            <div className="space-y-8">
+              <div className="bg-white dark:bg-gray-800/80 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700/50">
+                <div className="text-center mb-8">
+                  <h1 className="text-3xl font-bold text-cyan-500 mb-2">{roadmap.title}</h1>
+                  <p className="text-gray-600 dark:text-gray-300">{roadmap.description}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                    Focus Area: {roadmap.focusAreas} • {roadmap.totalWeeks} weeks
+                  </p>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-8 mb-8">
+                  <div className="bg-white/5 p-6 rounded-xl border border-gray-200/10">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Target className="w-6 h-6 text-cyan-400" />
+                      <h3 className="text-lg font-semibold text-white">Focus Area</h3>
                     </div>
-                  ))}
+                    <p className="text-gray-300">
+                      {roadmap.focusAreas}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      {roadmap.trackLabel}
+                    </p>
+                  </div>
+                  <div className="bg-white/5 p-6 rounded-xl border border-gray-200/10">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Clock className="w-6 h-6 text-cyan-400" />
+                      <h3 className="text-lg font-semibold text-white">Duration</h3>
+                    </div>
+                    <p className="text-gray-300">
+                      {roadmap.totalWeeks} weeks at {formData.time_availability}/week
+                    </p>
+                  </div>
+                  <div className="bg-white/5 p-6 rounded-xl border border-gray-200/10">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Lightbulb className="w-6 h-6 text-cyan-400" />
+                      <h3 className="text-lg font-semibold text-white">Level</h3>
+                    </div>
+                    <p className="text-gray-300 capitalize">
+                      {formData.current_level}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="space-y-8">
-                <h3 className="text-2xl font-bold text-white">Your Learning Path</h3>
-                {roadmap.weeks.map(renderWeek)}
-              </div>
+                <div className="mb-8">
+                  <h3 className="text-xl font-semibold text-cyan-400 mb-4 flex items-center gap-2">
+                    <Lightbulb className="w-5 h-5" />
+                    Personalized Tips
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {roadmap.personalizedTips?.map((tip, index) => (
+                      <div key={index} className="flex items-start gap-2 bg-white/5 p-4 rounded-lg">
+                        <span className="text-cyan-400">•</span>
+                        <p className="text-gray-300">{tip}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-              {/* Practice problems removed from roadmap view; use Problems page in navbar instead. */}
+                <div className="space-y-8">
+                  <h3 className="text-2xl font-bold text-white">Your Learning Path</h3>
+                  {roadmap.weeks.map(renderWeek)}
+                </div>
 
-              <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-                <Button
-                  onClick={() => setStep('questions')}
-                  variant="outline"
-                  className="border-cyan-500 text-cyan-600 hover:bg-cyan-50 dark:border-cyan-400 dark:text-cyan-300 dark:hover:bg-cyan-900/50"
-                >
-                  Modify My Plan
-                </Button>
-                <Button
-                  onClick={() => window.print()}
-                  className="bg-cyan-600 hover:bg-cyan-700 text-white"
-                >
-                  Print or Save as PDF
-                </Button>
+                {/* Practice problems removed from roadmap view; use Problems page in navbar instead. */}
+
+                <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button
+                    onClick={() => setStep('questions')}
+                    variant="outline"
+                    className="border-cyan-500 text-cyan-600 hover:bg-cyan-50 dark:border-cyan-400 dark:text-cyan-300 dark:hover:bg-cyan-900/50"
+                  >
+                    Modify My Plan
+                  </Button>
+                  <Button
+                    onClick={() => window.print()}
+                    className="bg-cyan-600 hover:bg-cyan-700 text-white"
+                  >
+                    Print or Save as PDF
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

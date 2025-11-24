@@ -20,7 +20,7 @@ const Dashboard = () => {
     const userData = localStorage.getItem('user');
     if (userData) {
       setUser(JSON.parse(userData));
-      
+
       // Check if this is the first time the user is logging in
       const firstLogin = localStorage.getItem('firstLogin');
       if (firstLogin === null) {
@@ -94,7 +94,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-black text-white transition-colors duration-200">
       {/* Header */}
-      <nav className="bg-black/90 backdrop-blur-sm border-b border-gray-800 shadow-lg">
+      <nav className="bg-black/90 backdrop-blur-sm border-b border-gray-800 shadow-lg sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="hover:opacity-80 transition-opacity">
             <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500" data-testid="dashboard-title">
@@ -104,10 +104,10 @@ const Dashboard = () => {
           <div className="flex items-center gap-3 flex-wrap justify-end">
             <div className="hidden md:block">
               <Select value={selectedLanguage} onValueChange={handleLanguageSelect}>
-                <SelectTrigger className="w-[220px] bg-gray-900/70 border-gray-800 text-slate-200 hover:border-cyan-500/50 transition-colors" data-testid="language-nav-selector">
+                <SelectTrigger className="w-[220px] bg-gray-900/70 border-gray-800 text-slate-200 hover:border-cyan-500/50 transition-all duration-300" data-testid="language-nav-selector">
                   <SelectValue placeholder="Languages" />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-900 border-gray-800 text-slate-200">
+                <SelectContent className="bg-gray-900 border-gray-800 text-slate-200 animate-slide-down">
                   <SelectItem value="python">Python</SelectItem>
                   <SelectItem value="java">Java</SelectItem>
                   <SelectItem value="html_css">HTML & CSS</SelectItem>
@@ -118,7 +118,7 @@ const Dashboard = () => {
             </div>
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-gray-800 text-gray-300 hover:text-cyan-400 transition-colors"
+              className="p-2 rounded-full hover:bg-gray-800 text-gray-300 hover:text-cyan-400 transition-all duration-300 hover:scale-110"
               aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               {theme === 'dark' ? (
@@ -128,13 +128,13 @@ const Dashboard = () => {
               )}
             </button>
             <Link to="/problems">
-              <Button variant="ghost" className="text-gray-300 hover:text-cyan-400 hover:bg-gray-800/50" data-testid="problems-nav-btn">
+              <Button variant="ghost" className="text-gray-300 hover:text-cyan-400 hover:bg-gray-800/50 transition-all duration-300" data-testid="problems-nav-btn">
                 <Trophy className="w-4 h-4 mr-2" />
                 Problems
               </Button>
             </Link>
             <Link to="/profile">
-              <Button variant="ghost" className="text-gray-300 hover:text-cyan-400 hover:bg-gray-800/50" data-testid="profile-nav-btn">
+              <Button variant="ghost" className="text-gray-300 hover:text-cyan-400 hover:bg-gray-800/50 transition-all duration-300" data-testid="profile-nav-btn">
                 <User className="w-4 h-4 mr-2" />
                 Profile
               </Button>
@@ -142,7 +142,7 @@ const Dashboard = () => {
             <Button
               variant="ghost"
               onClick={handleLogout}
-              className="text-gray-300 hover:text-red-400 hover:bg-gray-800/50"
+              className="text-gray-300 hover:text-red-400 hover:bg-gray-800/50 transition-all duration-300"
               data-testid="logout-button"
             >
               <LogOut className="w-5 h-5" />
@@ -150,44 +150,71 @@ const Dashboard = () => {
           </div>
         </div>
       </nav>
+
       <main className="max-w-7xl mx-auto px-6 py-8">
-        <section className="mb-12">
-          <div className="bg-black/90 rounded-2xl p-8 shadow-lg border border-gray-800 hover:shadow-xl transition-all hover:border-cyan-500/30">
-            <h2 className="text-3xl font-bold text-white mb-2">
-              {localStorage.getItem('firstLogin') === 'false' ? 
-                `Welcome to NSTrack, ${user?.name?.split(' ')[0]}! 🎉` : 
-                `Welcome back, ${user?.name?.split(' ')[0]}!`}
-            </h2>
-            <p className="text-lg text-slate-300">
-              Your Points: <span className="text-cyan-500 font-bold text-xl" data-testid="user-points">{user?.points || 0}</span>
-            </p>
+        {/* Hero Welcome Section */}
+        <section className="mb-12 animate-fade-in">
+          <div className="relative bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-2xl p-8 shadow-2xl border border-gray-800 overflow-hidden group hover:border-cyan-500/30 transition-all duration-500">
+            {/* Animated gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+            <div className="relative z-10">
+              <h2 className="text-4xl font-bold text-white mb-3 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-cyan-400 bg-[length:200%_auto] animate-shimmer">
+                {localStorage.getItem('firstLogin') === 'false' ?
+                  `Welcome to NSTrack, ${user?.name?.split(' ')[0]}! 🎉` :
+                  `Welcome back, ${user?.name?.split(' ')[0]}!`}
+              </h2>
+              <div className="flex items-center gap-3">
+                <p className="text-lg text-slate-300">
+                  Your Points:
+                </p>
+                <div className="flex items-center gap-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-4 py-2 rounded-lg border border-cyan-500/30">
+                  <Flame className="w-5 h-5 text-cyan-400 animate-bounce-subtle" />
+                  <span className="text-cyan-400 font-bold text-2xl" data-testid="user-points">{user?.points || 0}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
+
+        {/* Stats Grid with Staggered Animation */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-black/80 rounded-xl p-6 border border-gray-800 hover:border-cyan-500/30 transition-colors hover:shadow-lg">
+          <div className="bg-gradient-to-br from-gray-900 to-black rounded-xl p-6 border border-gray-800 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20 hover:scale-105 animate-slide-up" style={{ animationDelay: '0.1s', animationFillMode: 'both' }}>
             <div className="flex items-center justify-between mb-3">
-              <p className="text-gray-400">Overall Progress</p>
-              <span className="text-cyan-500 dark:text-cyan-400 font-bold">{Math.round(totalProgress)}%</span>
+              <p className="text-gray-400 font-medium">Overall Progress</p>
+              <span className="text-cyan-400 font-bold text-lg">{Math.round(totalProgress)}%</span>
             </div>
-            <Progress value={totalProgress} className="h-2 bg-gray-100 dark:bg-gray-700" data-testid="overall-progress" />
+            <Progress value={totalProgress} className="h-3 bg-gray-800 transition-all duration-500" data-testid="overall-progress" />
+            <div className="mt-2 text-xs text-gray-500">Keep pushing forward!</div>
           </div>
-          <div className="bg-black/80 rounded-xl p-6 border border-gray-800 hover:border-cyan-500/30 transition-colors hover:shadow-lg">
-            <p className="text-gray-400 mb-2">Topics Completed</p>
-            <p className="text-3xl font-bold text-white" data-testid="topics-completed">{topicsCompleted}</p>
+
+          <div className="bg-gradient-to-br from-gray-900 to-black rounded-xl p-6 border border-gray-800 hover:border-blue-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20 hover:scale-105 animate-slide-up" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
+            <p className="text-gray-400 mb-3 font-medium">Topics Completed</p>
+            <div className="flex items-center gap-3">
+              <p className="text-4xl font-bold text-white" data-testid="topics-completed">{topicsCompleted}</p>
+              <Trophy className="w-8 h-8 text-blue-400" />
+            </div>
+            <div className="mt-2 text-xs text-gray-500">Topics mastered</div>
           </div>
-          <div className="bg-black/80 rounded-xl p-6 border border-gray-800 hover:border-cyan-500/30 transition-colors hover:shadow-lg">
-            <p className="text-gray-400 mb-2">Problems Solved</p>
-            <p className="text-3xl font-bold text-white" data-testid="problems-solved">{problemsSolved}</p>
+
+          <div className="bg-gradient-to-br from-gray-900 to-black rounded-xl p-6 border border-gray-800 hover:border-purple-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20 hover:scale-105 animate-slide-up" style={{ animationDelay: '0.3s', animationFillMode: 'both' }}>
+            <p className="text-gray-400 mb-3 font-medium">Problems Solved</p>
+            <div className="flex items-center gap-3">
+              <p className="text-4xl font-bold text-white" data-testid="problems-solved">{problemsSolved}</p>
+              <Code className="w-8 h-8 text-purple-400" />
+            </div>
+            <div className="mt-2 text-xs text-gray-500">Challenges conquered</div>
           </div>
         </div>
+
         {/* Mobile Language Selector */}
-        <div className="md:hidden mb-12 bg-black/80 rounded-2xl p-6 border border-gray-800">
+        <div className="md:hidden mb-12 bg-black/80 rounded-2xl p-6 border border-gray-800 animate-fade-in">
           <h3 className="text-xl font-bold text-white mb-3">Languages</h3>
           <Select value={selectedLanguage} onValueChange={handleLanguageSelect}>
-            <SelectTrigger className="bg-black/80 border-gray-800 text-white" data-testid="language-selector-mobile">
+            <SelectTrigger className="bg-black/80 border-gray-800 text-white hover:border-cyan-500/50 transition-colors" data-testid="language-selector-mobile">
               <SelectValue placeholder="Select a language" />
             </SelectTrigger>
-            <SelectContent className="bg-gray-900 border-gray-800 text-gray-100">
+            <SelectContent className="bg-gray-900 border-gray-800 text-gray-100 animate-slide-down">
               <SelectItem value="python">Python</SelectItem>
               <SelectItem value="java">Java</SelectItem>
               <SelectItem value="html_css">HTML & CSS</SelectItem>
@@ -198,23 +225,35 @@ const Dashboard = () => {
         </div>
 
         {/* Learning Tracks */}
-        <section className="mb-12">
-          <h3 className="text-2xl font-bold text-white mb-6">Select a Learning Track</h3>
+        <section className="mb-12 animate-fade-in" style={{ animationDelay: '0.4s', animationFillMode: 'both' }}>
+          <h3 className="text-3xl font-bold text-white mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">Select a Learning Track</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {tracks.map((track) => (
+            {tracks.map((track, index) => (
               <div
                 key={track.id}
                 onClick={() => handleTrackSelect(track.name)}
-                className="group bg-black/80 rounded-xl p-6 cursor-pointer border border-gray-800 hover:border-cyan-500/30 hover:shadow-md transition-all duration-200"
+                className="group relative bg-gradient-to-br from-gray-900 to-black rounded-xl p-6 cursor-pointer border border-gray-800 hover:border-transparent transition-all duration-300 hover:scale-105 hover:shadow-2xl animate-scale-in overflow-hidden"
+                style={{ animationDelay: `${0.5 + index * 0.1}s`, animationFillMode: 'both' }}
                 data-testid={`track-card-${track.id}`}
               >
-                <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 bg-gradient-to-br ${track.color} text-white`}>
-                  <track.icon className="w-6 h-6" />
+                {/* Gradient border on hover */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${track.color} opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-xl`}></div>
+                <div className={`absolute inset-0 bg-gradient-to-br ${track.color} opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-300`}></div>
+
+                <div className="relative z-10">
+                  <div className={`w-14 h-14 rounded-xl flex items-center justify-center mb-4 bg-gradient-to-br ${track.color} text-white shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
+                    <track.icon className="w-7 h-7" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-2 group-hover:text-cyan-400 transition-colors duration-300">
+                    {track.name}
+                  </h3>
+                  <p className="text-slate-400 text-sm group-hover:text-slate-300 transition-colors duration-300">{track.description}</p>
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-cyan-600 transition-colors">
-                  {track.name}
-                </h3>
-                <p className="text-slate-300 text-sm">{track.description}</p>
+
+                {/* Selection indicator */}
+                {selectedTrack === track.name && (
+                  <div className="absolute top-3 right-3 w-3 h-3 bg-cyan-400 rounded-full animate-pulse-glow"></div>
+                )}
               </div>
             ))}
           </div>
@@ -222,23 +261,26 @@ const Dashboard = () => {
 
         {/* Generate Roadmap Button */}
         {selectedTrack && (
-          <div className="flex justify-center animate-fade-in">
-            <div className="bg-gradient-to-r from-gray-900 to-black border border-gray-800 text-white rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all">
-              <Button
-                className="bg-transparent text-white font-medium px-8 py-3 rounded-lg shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 focus:ring-2 focus:ring-cyan-500/30 focus:outline-none"
-                onClick={handleGenerateRoadmap}
-                data-testid="generate-roadmap-btn"
-              >
-                Generate Roadmap
-              </Button>
+          <div className="flex justify-center mb-12 animate-slide-up">
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-500 animate-pulse-glow"></div>
+              <div className="relative bg-gradient-to-r from-gray-900 to-black border border-gray-800 text-white rounded-2xl p-8 shadow-xl">
+                <Button
+                  className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold px-10 py-4 rounded-xl shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 focus:ring-2 focus:ring-cyan-500/50 focus:outline-none text-lg"
+                  onClick={handleGenerateRoadmap}
+                  data-testid="generate-roadmap-btn"
+                >
+                  Generate Roadmap
+                </Button>
+              </div>
             </div>
           </div>
         )}
 
         {/* Motivational Message */}
         {totalProgress > 0 && (
-          <div className="mt-12 bg-black/80 rounded-2xl p-6 text-center border border-gray-800 hover:border-cyan-500/30 transition-colors">
-            <p className="text-lg text-gray-300">
+          <div className="mt-12 bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-2xl p-8 text-center border border-gray-800 hover:border-cyan-500/30 transition-all duration-500 animate-slide-up shadow-lg hover:shadow-cyan-500/10">
+            <p className="text-xl text-gray-300 font-medium">
               {totalProgress < 25 && "🌱 Great start! Keep learning consistently."}
               {totalProgress >= 25 && totalProgress < 50 && "🚀 You're making solid progress! Keep going."}
               {totalProgress >= 50 && totalProgress < 75 && "🌟 Excellent work! You're more than halfway there."}
