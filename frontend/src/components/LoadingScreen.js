@@ -2,20 +2,24 @@ import React, { useState, useEffect } from 'react';
 
 const LoadingScreen = ({ onComplete }) => {
   const [isVisible, setIsVisible] = useState(true);
-  const [phase, setPhase] = useState('reveal'); // reveal -> powerup -> charge -> explode -> blast -> fadeout
+  const [phase, setPhase] = useState('particles'); // particles -> assembly -> reveal -> powerup -> charge -> explode -> blast -> fadeout
 
   useEffect(() => {
-    const powerupTimer = setTimeout(() => setPhase('powerup'), 800); // Faster: 0.8s instead of 1s
-    const chargeTimer = setTimeout(() => setPhase('charge'), 2500); // Faster: 2.5s instead of 3.5s
-    const explodeTimer = setTimeout(() => setPhase('explode'), 4200); // Faster: 4.2s instead of 5.2s
-    const blastTimer = setTimeout(() => setPhase('blast'), 4700); // Slower blast: 0.5s duration
-    const fadeTimer = setTimeout(() => setPhase('fadeout'), 5400); // Slower: 0.7s blast total
+    const assemblyTimer = setTimeout(() => setPhase('assembly'), 1500); // Particles: 1.5s
+    const revealTimer = setTimeout(() => setPhase('reveal'), 3500); // Assembly: 2s
+    const powerupTimer = setTimeout(() => setPhase('powerup'), 4300); // Reveal: 0.8s
+    const chargeTimer = setTimeout(() => setPhase('charge'), 6000); // Powerup: 1.7s
+    const explodeTimer = setTimeout(() => setPhase('explode'), 7700); // Charge: 1.7s
+    const blastTimer = setTimeout(() => setPhase('blast'), 8200); // Explode: 0.5s
+    const fadeTimer = setTimeout(() => setPhase('fadeout'), 8900); // Blast: 0.7s
     const completeTimer = setTimeout(() => {
       setIsVisible(false);
       if (onComplete) onComplete();
-    }, 6000); // Total: 6s
+    }, 10500); // Total: 10.5s
 
     return () => {
+      clearTimeout(assemblyTimer);
+      clearTimeout(revealTimer);
       clearTimeout(powerupTimer);
       clearTimeout(chargeTimer);
       clearTimeout(explodeTimer);
@@ -27,23 +31,92 @@ const LoadingScreen = ({ onComplete }) => {
 
   if (!isVisible) return null;
 
-  const orbitalStars = Array.from({ length: 20 }, (_, i) => ({
-    id: i,
-    angle: (i * 360) / 20,
-  }));
-
-  const shootingStars = Array.from({ length: 12 }, (_, i) => ({
-    id: i,
-    startX: Math.random() * 100,
-    startY: Math.random() * 100,
-    delay: Math.random() * 6,
-  }));
-
   const letters = ['N', 'S', 'T', 'r', 'a', 'c', 'k'];
+
+  // Generate particle positions
+  const particles = Array.from({ length: 100 }, (_, i) => ({
+    id: i,
+    startX: -200 + Math.random() * 600,
+    startY: -200 + Math.random() * 600,
+    endAngle: (i * 360) / 100,
+    delay: Math.random() * 1.2,
+  }));
 
   return (
     <>
       <style>{`
+        @keyframes particleSwirl {
+          0% {
+            transform: translate(var(--start-x), var(--start-y)) scale(0);
+            opacity: 0;
+          }
+          50% {
+            opacity: 1;
+          }
+          100% {
+            transform: translate(var(--end-x), var(--end-y)) scale(1);
+            opacity: 1;
+          }
+        }
+
+        @keyframes pixelMerge {
+          0% {
+            transform: scale(0.5);
+            opacity: 0.5;
+            filter: blur(4px);
+          }
+          100% {
+            transform: scale(1);
+            opacity: 1;
+            filter: blur(0);
+          }
+        }
+
+        @keyframes screwPixelRotate {
+          0% { 
+            transform: rotate(0deg) scale(0);
+            opacity: 0;
+          }
+          50% {
+            opacity: 1;
+          }
+          100% { 
+            transform: rotate(360deg) scale(1);
+            opacity: 1;
+          }
+        }
+
+        @keyframes backgroundTextPulse {
+          0%, 100% { 
+            opacity: 0.05;
+            text-shadow: 0 0 20px rgba(34, 211, 238, 0.1);
+          }
+          50% { 
+            opacity: 0.15;
+            text-shadow: 0 0 40px rgba(34, 211, 238, 0.2);
+          }
+        }
+
+        @keyframes cameraOrbit {
+          0% { transform: perspective(1200px) rotateY(0deg) rotateX(5deg); }
+          100% { transform: perspective(1200px) rotateY(360deg) rotateX(5deg); }
+        }
+
+        @keyframes electricSpark {
+          0% { 
+            transform: translate(0, 0) scale(0) rotate(0deg);
+            opacity: 0;
+          }
+          20% {
+            opacity: 1;
+            transform: translate(var(--spark-x), var(--spark-y)) scale(1.5) rotate(180deg);
+          }
+          100% { 
+            transform: translate(calc(var(--spark-x) * 2), calc(var(--spark-y) * 2)) scale(0) rotate(360deg);
+            opacity: 0;
+          }
+        }
+
         @keyframes floatIn {
           0% { opacity: 0; transform: translateY(80px); }
           100% { opacity: 1; transform: translateY(0); }
@@ -76,18 +149,27 @@ const LoadingScreen = ({ onComplete }) => {
           }
         }
 
-        @keyframes orbitNormal { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes orbitFast { from { transform: rotate(0deg); } to { transform: rotate(720deg); } }
-        
+        @keyframes letterFadeAway {
+          0% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+          }
+          50% {
+            opacity: 0.5;
+            transform: translateY(-30px) scale(1.2);
+            filter: blur(2px);
+          }
+          100% {
+            opacity: 0;
+            transform: translateY(-60px) scale(1.5);
+            filter: blur(8px);
+          }
+        }
+
         @keyframes starShimmer {
           0%, 100% { transform: scale(1); opacity: 0.7; }
           50% { transform: scale(2); opacity: 1; }
-        }
-
-        @keyframes shootingStar {
-          0% { transform: translate(0, 0); opacity: 0; }
-          10% { opacity: 1; }
-          100% { transform: translate(-400px, 400px); opacity: 0; }
         }
 
         @keyframes hologramReveal {
@@ -153,12 +235,6 @@ const LoadingScreen = ({ onComplete }) => {
           }
         }
 
-        @keyframes plasmaPulse {
-          0% { opacity: 0; transform: scaleY(0); }
-          50% { opacity: 0.8; transform: scaleY(1); }
-          100% { opacity: 0.4; transform: scaleY(0.7); }
-        }
-
         @keyframes explosionFlash {
           0% { opacity: 0; transform: scale(0.5); }
           40% { opacity: 1; transform: scale(2.5); }
@@ -171,6 +247,21 @@ const LoadingScreen = ({ onComplete }) => {
           100% { opacity: 0; }
         }
 
+        @keyframes volumetricLight {
+          0% { 
+            opacity: 0;
+            transform: scale(0.5);
+          }
+          50% {
+            opacity: 0.3;
+            transform: scale(1.5);
+          }
+          100% { 
+            opacity: 0;
+            transform: scale(3);
+          }
+        }
+
         @keyframes dissolve {
           to { opacity: 0; }
         }
@@ -180,28 +271,154 @@ const LoadingScreen = ({ onComplete }) => {
         className="fixed inset-0 z-50 flex items-center justify-center bg-black overflow-hidden"
         style={{
           animation: phase === 'fadeout' ? 'dissolve 0.5s ease-out forwards' : 'none',
-          perspective: '1000px',
+          perspective: '1200px',
         }}
       >
-        {/* Shooting Stars */}
-        {(phase === 'reveal' || phase === 'powerup' || phase === 'charge') && shootingStars.map((star) => (
+        {/* Background NSTrack Text (Faint) */}
+        {(phase === 'particles' || phase === 'assembly') && (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+            <div className="flex">
+              {letters.map((letter, i) => (
+                <span
+                  key={i}
+                  className="text-9xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-cyan-300"
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    letterSpacing: '0.05em',
+                    animation: 'backgroundTextPulse 3s ease-in-out infinite',
+                    animationDelay: `${i * 0.1}s`,
+                  }}
+                >
+                  {letter}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Volumetric Light Rays */}
+        {(phase === 'charge' || phase === 'explode' || phase === 'blast') && (
           <div
-            key={`shooting-${star.id}`}
-            className="absolute w-2 h-2 bg-white rounded-full"
+            className="absolute inset-0 pointer-events-none"
             style={{
-              left: `${star.startX}%`,
-              top: `${star.startY}%`,
-              animation: `shootingStar ${phase === 'charge' ? '1.5s' : '3s'} linear infinite`,
-              animationDelay: `${star.delay}s`,
-              boxShadow: '0 0 8px rgba(255, 255, 255, 1), 0 0 16px rgba(34, 211, 238, 0.8)',
+              background: 'radial-gradient(circle, rgba(100, 200, 255, 0.1) 0%, transparent 70%)',
+              animation: 'volumetricLight 2s ease-out infinite',
+              mixBlendMode: 'screen',
             }}
           />
-        ))}
+        )}
 
-        {/* Main Container */}
-        <div className="relative" style={{ transformStyle: 'preserve-3d' }}>
+        {/* Main Container with 3D Camera */}
+        <div
+          className="relative"
+          style={{
+            transformStyle: 'preserve-3d',
+            animation: (phase === 'particles' || phase === 'assembly') ? 'cameraOrbit 3.5s linear forwards' : 'none',
+          }}
+        >
+          {/* PARTICLE SWIRL PHASE */}
+          {phase === 'particles' && (
+            <div className="absolute inset-0 flex items-center justify-center" style={{ top: '80px' }}>
+              {particles.map((particle) => {
+                const endRadius = 250;
+                const endX = Math.cos((particle.endAngle * Math.PI) / 180) * endRadius;
+                const endY = Math.sin((particle.endAngle * Math.PI) / 180) * endRadius;
+
+                return (
+                  <div
+                    key={particle.id}
+                    className="absolute w-2 h-2 rounded-full"
+                    style={{
+                      '--start-x': `${particle.startX}px`,
+                      '--start-y': `${particle.startY}px`,
+                      '--end-x': `${endX}px`,
+                      '--end-y': `${endY}px`,
+                      background: 'radial-gradient(circle, #94a3b8, #64748b)',
+                      animation: `particleSwirl 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards`,
+                      animationDelay: `${particle.delay}s`,
+                      boxShadow: '0 0 4px rgba(148, 163, 184, 0.8)',
+                    }}
+                  />
+                );
+              })}
+            </div>
+          )}
+
+          {/* ASSEMBLY PHASE */}
+          {phase === 'assembly' && (
+            <div className="absolute inset-0 flex items-center justify-center" style={{ top: '80px' }}>
+              {/* Pixel Rings Materializing */}
+              {[0, 1, 2].map((ring, i) => (
+                <div
+                  key={`ring-${i}`}
+                  className="absolute rounded-full"
+                  style={{
+                    width: `${(3 - i) * 160}px`,
+                    height: `${(3 - i) * 160}px`,
+                    border: `4px solid rgba(${100 + i * 30}, ${150 + i * 20}, ${200 + i * 20}, ${0.4 + i * 0.2})`,
+                    animation: `pixelMerge 0.8s ease-out forwards`,
+                    animationDelay: `${i * 0.3}s`,
+                    boxShadow: `0 0 ${20 + i * 10}px rgba(${100 + i * 30}, ${150 + i * 20}, ${200 + i * 20}, 0.6)`,
+                    background: `radial-gradient(circle, rgba(${100 + i * 30}, ${150 + i * 20}, ${200 + i * 20}, 0.1), transparent)`,
+                  }}
+                />
+              ))}
+
+              {/* Glowing Pixel Screws */}
+              {Array.from({ length: 8 }).map((_, i) => {
+                const angle = (i * 360) / 8;
+                const x = Math.cos((angle * Math.PI) / 180) * 200;
+                const y = Math.sin((angle * Math.PI) / 180) * 200;
+                return (
+                  <div
+                    key={`screw-${i}`}
+                    className="absolute w-4 h-4 rounded-full"
+                    style={{
+                      left: '50%',
+                      top: '50%',
+                      transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
+                      background: 'linear-gradient(135deg, #94a3b8, #64748b)',
+                      animation: `screwPixelRotate 0.6s ease-out forwards`,
+                      animationDelay: `${0.5 + i * 0.1}s`,
+                      boxShadow: '0 0 8px rgba(148, 163, 184, 1), inset 0 1px 2px rgba(255, 255, 255, 0.3)',
+                    }}
+                  >
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-3 h-0.5 bg-gray-900 absolute rounded-full" />
+                      <div className="w-0.5 h-3 bg-gray-900 absolute rounded-full" />
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Yellow Sparks */}
+              {Array.from({ length: 15 }).map((_, i) => {
+                const angle = Math.random() * 360;
+                const distance = 50 + Math.random() * 80;
+                const sparkX = Math.cos((angle * Math.PI) / 180) * distance;
+                const sparkY = Math.sin((angle * Math.PI) / 180) * distance;
+                return (
+                  <div
+                    key={`spark-${i}`}
+                    className="absolute w-1.5 h-1.5 rounded-full"
+                    style={{
+                      left: '50%',
+                      top: '50%',
+                      '--spark-x': `${sparkX}px`,
+                      '--spark-y': `${sparkY}px`,
+                      background: 'radial-gradient(circle, #fef08a, #fbbf24)',
+                      animation: `electricSpark 0.5s ease-out infinite`,
+                      animationDelay: `${1 + Math.random() * 0.8}s`,
+                      boxShadow: '0 0 6px rgba(255, 200, 0, 1)',
+                    }}
+                  />
+                );
+              })}
+            </div>
+          )}
+
           {/* HOLOGRAPHIC ARC REACTOR */}
-          {(phase !== 'blast' && phase !== 'fadeout') && (
+          {(phase !== 'particles' && phase !== 'assembly' && phase !== 'blast' && phase !== 'fadeout') && (
             <div
               className="absolute inset-0 flex items-center justify-center pointer-events-none"
               style={{
@@ -217,10 +434,12 @@ const LoadingScreen = ({ onComplete }) => {
                 top: '80px',
               }}
             >
-              {/* Outer Holographic Ring */}
+              {/* Outer Ring */}
               <div
-                className="absolute w-64 h-64 rounded-full"
+                className="absolute rounded-full"
                 style={{
+                  width: '500px',
+                  height: '500px',
                   background: 'transparent',
                   border: '3px solid rgba(100, 200, 255, 0.6)',
                   boxShadow:
@@ -232,16 +451,17 @@ const LoadingScreen = ({ onComplete }) => {
                     : 'ringRotate 8s linear infinite',
                 }}
               >
-                {/* Energy Nodes on Outer Ring */}
                 {Array.from({ length: 12 }).map((_, i) => {
                   const angle = (i * 360) / 12;
-                  const x = Math.cos((angle * Math.PI) / 180) * 125;
-                  const y = Math.sin((angle * Math.PI) / 180) * 125;
+                  const x = Math.cos((angle * Math.PI) / 180) * 245;
+                  const y = Math.sin((angle * Math.PI) / 180) * 245;
                   return (
                     <div
                       key={`node-${i}`}
-                      className="absolute w-3 h-3 rounded-full"
+                      className="absolute rounded-full"
                       style={{
+                        width: '16px',
+                        height: '16px',
                         left: '50%',
                         top: '50%',
                         transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
@@ -255,10 +475,12 @@ const LoadingScreen = ({ onComplete }) => {
                 })}
               </div>
 
-              {/* Middle Holographic Ring */}
+              {/* Middle Ring */}
               <div
-                className="absolute w-48 h-48 rounded-full"
+                className="absolute rounded-full"
                 style={{
+                  width: '380px',
+                  height: '380px',
                   background: 'transparent',
                   border: '2px solid rgba(100, 200, 255, 0.7)',
                   boxShadow:
@@ -270,36 +492,12 @@ const LoadingScreen = ({ onComplete }) => {
                 }}
               />
 
-              {/* Energy Channels */}
-              <div className="absolute w-44 h-44">
-                {Array.from({ length: 8 }).map((_, i) => {
-                  const angle = (i * 360) / 8;
-                  const x = Math.cos((angle * Math.PI) / 180) * 80;
-                  const y = Math.sin((angle * Math.PI) / 180) * 80;
-                  return (
-                    <div
-                      key={`channel-${i}`}
-                      className="absolute w-2 h-12 rounded-full"
-                      style={{
-                        left: '50%',
-                        top: '50%',
-                        transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) rotate(${angle + 90}deg)`,
-                        background: 'linear-gradient(to bottom, rgba(100, 200, 255, 0.9), rgba(34, 211, 238, 0.7))',
-                        boxShadow: '0 0 15px rgba(100, 200, 255, 1)',
-                        animation: (phase === 'charge' || phase === 'explode')
-                          ? 'plasmaPulse 0.4s ease-in-out infinite'
-                          : 'none',
-                        animationDelay: `${i * 0.08}s`,
-                      }}
-                    />
-                  );
-                })}
-              </div>
-
-              {/* Inner Holographic Ring */}
+              {/* Inner Ring */}
               <div
-                className="absolute w-32 h-32 rounded-full"
+                className="absolute rounded-full"
                 style={{
+                  width: '260px',
+                  height: '260px',
                   background: 'radial-gradient(circle, rgba(100, 200, 255, 0.3), transparent 70%)',
                   border: '2px solid rgba(100, 200, 255, 0.8)',
                   boxShadow:
@@ -311,10 +509,12 @@ const LoadingScreen = ({ onComplete }) => {
                 }}
               />
 
-              {/* Triangular Energy Core */}
+              {/* Energy Core */}
               <div
-                className="absolute w-24 h-24"
+                className="absolute"
                 style={{
+                  width: '150px',
+                  height: '150px',
                   clipPath: 'polygon(50% 0%, 100% 100%, 0% 100%)',
                   background: 'linear-gradient(to bottom, rgba(220, 240, 255, 0.95), rgba(100, 200, 255, 0.9))',
                   animation: phase === 'charge' || phase === 'explode'
@@ -324,32 +524,38 @@ const LoadingScreen = ({ onComplete }) => {
                 }}
               />
 
-              {/* Plasma Energy Lines */}
-              {(phase === 'charge' || phase === 'explode') && Array.from({ length: 6 }).map((_, i) => {
-                const angle = (i * 360) / 6;
-                const x = Math.cos((angle * Math.PI) / 180) * 50;
-                const y = Math.sin((angle * Math.PI) / 180) * 50;
+              {/* Electric Sparks During Glow-Up */}
+              {(phase === 'powerup' || phase === 'charge' || phase === 'explode') && Array.from({ length: 30 }).map((_, i) => {
+                const angle = Math.random() * 360;
+                const distance = 150 + Math.random() * 150;
+                const sparkX = Math.cos((angle * Math.PI) / 180) * distance;
+                const sparkY = Math.sin((angle * Math.PI) / 180) * distance;
                 return (
                   <div
-                    key={`plasma-${i}`}
-                    className="absolute w-1 h-20"
+                    key={`electric-spark-${i}`}
+                    className="absolute rounded-full"
                     style={{
+                      width: '12px',
+                      height: '12px',
                       left: '50%',
                       top: '50%',
-                      transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) rotate(${angle}deg)`,
-                      background: 'linear-gradient(to top, transparent, rgba(220, 240, 255, 1), transparent)',
-                      boxShadow: '0 0 15px rgba(220, 240, 255, 1)',
-                      animation: 'plasmaPulse 0.5s ease-in-out infinite',
-                      animationDelay: `${i * 0.1}s`,
+                      '--spark-x': `${sparkX}px`,
+                      '--spark-y': `${sparkY}px`,
+                      background: 'radial-gradient(circle, #60a5fa, #3b82f6)',
+                      animation: `electricSpark ${0.5 + Math.random() * 0.5}s ease-out infinite`,
+                      animationDelay: `${Math.random() * 2}s`,
+                      boxShadow: '0 0 8px rgba(96, 165, 250, 1), 0 0 16px rgba(59, 130, 246, 0.8)',
                     }}
                   />
                 );
               })}
 
-              {/* Holographic Glow Sphere */}
+              {/* Glow Sphere */}
               <div
-                className="absolute w-56 h-56 rounded-full pointer-events-none"
+                className="absolute rounded-full pointer-events-none"
                 style={{
+                  width: '450px',
+                  height: '450px',
                   background: 'radial-gradient(circle, rgba(100, 200, 255, 0.2) 0%, transparent 70%)',
                   filter: 'blur(20px)',
                   opacity: phase === 'charge' || phase === 'explode' ? 0.8 : 0.4,
@@ -358,40 +564,8 @@ const LoadingScreen = ({ onComplete }) => {
             </div>
           )}
 
-          {/* Orbital Stars */}
-          {(phase === 'reveal' || phase === 'powerup' || phase === 'charge') && (
-            <div
-              className="absolute inset-0 flex items-center justify-center"
-              style={{
-                animation: phase === 'charge'
-                  ? 'orbitFast 1.5s linear infinite'
-                  : 'orbitNormal 8s linear infinite',
-              }}
-            >
-              {orbitalStars.map((star) => {
-                const radius = 220;
-                const x = Math.cos((star.angle * Math.PI) / 180) * radius;
-                const y = Math.sin((star.angle * Math.PI) / 180) * radius;
-                return (
-                  <div
-                    key={star.id}
-                    className="absolute w-3 h-3 bg-cyan-400 rounded-full"
-                    style={{
-                      left: '50%',
-                      top: '50%',
-                      transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
-                      animation: 'starShimmer 1.2s ease-in-out infinite',
-                      animationDelay: `${star.id * 0.08}s`,
-                      boxShadow: '0 0 12px rgba(34, 211, 238, 1)',
-                    }}
-                  />
-                );
-              })}
-            </div>
-          )}
-
           {/* NSTrack Text */}
-          {phase !== 'explode' && phase !== 'blast' && phase !== 'fadeout' && (
+          {phase !== 'particles' && phase !== 'assembly' && phase !== 'explode' && phase !== 'blast' && phase !== 'fadeout' && (
             <div
               className="relative z-10 flex"
               style={{
@@ -419,8 +593,8 @@ const LoadingScreen = ({ onComplete }) => {
             </div>
           )}
 
-          {/* Exploding Letters */}
-          {(phase === 'explode' || phase === 'blast') && (
+          {/* Exploding/Fading Letters */}
+          {(phase === 'explode' || phase === 'blast' || phase === 'fadeout') && (
             <div className="relative z-10 flex" style={{ transformStyle: 'preserve-3d' }}>
               {letters.map((letter, i) => (
                 <span
@@ -429,7 +603,9 @@ const LoadingScreen = ({ onComplete }) => {
                   style={{
                     fontFamily: "'Space Grotesk', sans-serif",
                     letterSpacing: '0.05em',
-                    animation: 'letterBlast 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
+                    animation: phase === 'fadeout'
+                      ? `letterFadeAway 0.6s ease-out forwards`
+                      : `letterBlast 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`,
                     animationDelay: `${i * 0.05}s`,
                     textShadow: '0 0 40px rgba(255, 255, 255, 1), 0 0 80px rgba(100, 200, 255, 1)',
                   }}

@@ -11,6 +11,7 @@ import LanguagePage from './pages/LanguagePage';
 import RoadmapPage from './pages/RoadmapPage';
 import ProblemsPage from './pages/ProblemsPage';
 import ProfilePage from './pages/ProfilePage';
+import BubbleGame from './pages/BubbleGame';
 import { Toaster } from 'sonner';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { ProgressProvider } from './context/ProgressContext';
@@ -67,6 +68,7 @@ const AppContent = () => {
             <Route path="/roadmap" element={isAuthenticated ? <RoadmapPage /> : <Navigate to="/login" />} />
             <Route path="/problems" element={isAuthenticated ? <ProblemsPage /> : <Navigate to="/login" />} />
             <Route path="/profile" element={isAuthenticated ? <ProfilePage /> : <Navigate to="/login" />} />
+            <Route path="/bubble-game" element={<BubbleGame />} />
           </Routes>
         </BrowserRouter>
         <Toaster position="top-right" theme={theme === 'dark' ? 'dark' : 'light'} />

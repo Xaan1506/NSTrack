@@ -9,8 +9,10 @@
   --background-rgb: 248, 250, 252;
   --card-rgb: 255, 255, 255;
   --card-border-rgb: 226, 232, 240;
-  --primary-rgb: 34, 211, 238; /* cyan-400 */
-  --primary-hover-rgb: 6, 182, 212; /* cyan-500 */
+  --primary-rgb: 34, 211, 238;
+  /* cyan-400 */
+  --primary-hover-rgb: 6, 182, 212;
+  /* cyan-500 */
   --accent-foreground: 210 100% 98%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 210 100% 98%;
@@ -56,7 +58,8 @@ html {
 }
 
 /* Smooth scrolling for the entire document */
-html, body {
+html,
+body {
   scroll-behavior: smooth;
 }
 
@@ -66,7 +69,9 @@ html, body {
 }
 
 /* Smooth transitions for interactive elements */
-a, button, .transition-smooth {
+a,
+button,
+.transition-smooth {
   transition: all 0.3s ease-in-out;
 }
 
@@ -80,22 +85,70 @@ html {
   scroll-behavior: smooth;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   width: 100%;
 }
 
 /* Scan animation for password typing effect */
 @keyframes scan {
-  0% {
-    left: 0%;
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
+
+  0%,
   100% {
-    left: 100%;
-    opacity: 0;
+    transform: translateY(0);
   }
+
+  50% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  10% {
+    transform: translate(-5px, -5px) rotate(-2deg);
+  }
+
+  20% {
+    transform: translate(5px, 5px) rotate(2deg);
+  }
+
+  30% {
+    transform: translate(-5px, 5px) rotate(-1deg);
+  }
+
+  40% {
+    transform: translate(5px, -5px) rotate(1deg);
+  }
+
+  50% {
+    transform: translate(-3px, -3px) rotate(-2deg);
+  }
+
+  60% {
+    transform: translate(3px, 3px) rotate(2deg);
+  }
+
+  70% {
+    transform: translate(-3px, 3px) rotate(-1deg);
+  }
+
+  80% {
+    transform: translate(3px, -3px) rotate(1deg);
+  }
+
+  90% {
+    transform: translate(-1px, -1px) rotate(-0.5deg);
+  }
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
 }

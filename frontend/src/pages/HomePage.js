@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Users, ArrowRight, Sun, Moon, CheckCircle2, Bell, ChevronDown } from 'lucide-react';
 // theme toggle removed for landing page to enforce all-black design
 import FeaturesSection from '../components/FeaturesSection';
 import InteractiveBubble from '../components/InteractiveBubble';
+import InteractiveSection from '../components/InteractiveSection';
 import LoadingScreen from '../components/LoadingScreen';
 import { useTheme } from '../context/ThemeContext';
 
@@ -21,6 +22,27 @@ const HomePage = () => {
   const [showLoading, setShowLoading] = useState(() => {
     return !sessionStorage.getItem('animationShown');
   });
+
+
+  // Create refs for all bubbles for collision detection
+  const bubbleData = [
+    { key: 'CMD', delay: '0s', duration: '20s', x: '10%', y: '20%' },
+    { key: 'RETURN', delay: '2s', duration: '25s', x: '80%', y: '15%' },
+    { key: 'SHIFT', delay: '4s', duration: '22s', x: '15%', y: '70%' },
+    { key: 'ENTER', delay: '1s', duration: '24s', x: '85%', y: '60%' },
+    { key: 'CTRL', delay: '3s', duration: '23s', x: '50%', y: '30%' },
+    { key: 'ALT', delay: '5s', duration: '21s', x: '30%', y: '50%' },
+    { key: 'ESC', delay: '2.5s', duration: '26s', x: '70%', y: '40%' },
+    { key: 'TAB', delay: '4.5s', duration: '19s', x: '20%', y: '80%' },
+    { key: 'SPACE', delay: '1.5s', duration: '27s', x: '60%', y: '75%' },
+    { key: 'DEL', delay: '3.5s', duration: '20s', x: '90%', y: '85%' },
+  ];
+
+  // Initialize refs array - use useRef to create stable refs
+  const bubbleRefs = useRef(
+    bubbleData.map(() => ({ current: null }))
+  );
+
 
   useEffect(() => {
     try {
@@ -63,26 +85,18 @@ const HomePage = () => {
         {/* Floating Interactive Keyboard Keys */}
         <div className="absolute inset-0 overflow-hidden">
           {/* Keyboard keys that move away from mouse */}
-          {[
-            { key: 'CMD', delay: '0s', duration: '20s', x: '10%', y: '20%' },
-            { key: 'RETURN', delay: '2s', duration: '25s', x: '80%', y: '15%' },
-            { key: 'SHIFT', delay: '4s', duration: '22s', x: '15%', y: '70%' },
-            { key: 'ENTER', delay: '1s', duration: '24s', x: '85%', y: '60%' },
-            { key: 'CTRL', delay: '3s', duration: '23s', x: '50%', y: '30%' },
-            { key: 'ALT', delay: '5s', duration: '21s', x: '30%', y: '50%' },
-            { key: 'ESC', delay: '2.5s', duration: '26s', x: '70%', y: '40%' },
-            { key: 'TAB', delay: '4.5s', duration: '19s', x: '20%', y: '80%' },
-            { key: 'SPACE', delay: '1.5s', duration: '27s', x: '60%', y: '75%' },
-            { key: 'DEL', delay: '3.5s', duration: '20s', x: '90%', y: '85%' },
-          ].map((item, index) => (
+          {bubbleData.map((item, index) => (
             <InteractiveBubble
               key={index}
+              ref={bubbleRefs.current[index]}
               keyText={item.key}
               initialX={item.x}
               initialY={item.y}
               delay={item.delay}
               duration={item.duration}
               theme={theme}
+              bubbles={bubbleRefs.current}
+              index={index}
             />
           ))}
         </div>

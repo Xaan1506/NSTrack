@@ -318,13 +318,14 @@ const CodeEditor = ({ language: initialLanguage, problem, onSubmit }) => {
                 value={language}
                 onValueChange={(value) => {
                   setLanguage(value);
-                  // Prevent page scroll
-                  setTimeout(() => {
-                    const activeElement = document.activeElement;
-                    if (activeElement && activeElement.blur) {
-                      activeElement.blur();
-                    }
-                  }, 0);
+                }}
+                onOpenChange={(open) => {
+                  if (!open) {
+                    // Prevent scroll when closing
+                    setTimeout(() => {
+                      window.scrollTo({ top: window.scrollY, behavior: 'instant' });
+                    }, 0);
+                  }
                 }}
               >
                 <SelectTrigger className="w-[140px] bg-slate-900/30 border-slate-700 text-slate-200 h-8">
