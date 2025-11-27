@@ -1,13 +1,27 @@
 {
-    "buildCommand": "cd frontend && npm run build",
-    "outputDirectory": "frontend/build",
-    "devCommand": "cd frontend && npm start",
-    "installCommand": "cd frontend && npm install",
-    "framework": null,
-    "rewrites": [
-        {
-            "source": "/(.*)",
-            "destination": "/index.html"
-        }
-    ]
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "frontend/build",
+        "buildCommand": "yarn build",
+        "installCommand": "yarn"
+      }
+    },
+    {
+      "src": "api/server.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/server.py" },
+    { "src": "/(.*)", "dest": "frontend/build/$1" }
+  ],
+  "functions": {
+    "api/server.py": {
+      "maxDuration": 10,
+      "runtime": "python3.11"
+    }
+  }
 }

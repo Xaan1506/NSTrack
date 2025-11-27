@@ -17,7 +17,7 @@ import { Toaster } from 'sonner';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { ProgressProvider } from './context/ProgressContext';
 
-const BACKEND_URL = 'http://localhost:8000';
+const BACKEND_URL = process.env.REACT_APP_API_URL || '';
 export const API = `${BACKEND_URL}/api`;
 
 export const getAuthHeaders = () => {
